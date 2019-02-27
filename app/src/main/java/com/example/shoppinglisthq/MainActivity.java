@@ -3,6 +3,7 @@ package com.example.shoppinglisthq;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     ShoppingMemoDataSource dataSource;
     private boolean isButtonClick = true;
     private ListView mShoppingMemosListView;
+    private Drawable drawable;
+    private CheckedTextView checkedTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 View view = super.getView(position,convertView,parent);
                 TextView textView = (TextView)view;
 
+
                 ShoppingMemo memo = (ShoppingMemo) mShoppingMemosListView.getItemAtPosition(position);
                 if(memo.isChecked()){
                     textView.setPaintFlags(textView.getPaintFlags()| Paint.STRIKE_THRU_TEXT_FLAG);
@@ -75,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
         };
 
         mShoppingMemosListView.setAdapter(shoppingMemoArrayAdapter);
+
+        mShoppingMemosListView.setOnItemClickListener((parent, view, position, id) -> {
+            ShoppingMemo memo = (ShoppingMemo) parent.getItemAtPosition(position);
+            ShoppingMemo updateMemo = dataSource.updateShoppingMemo(memo.getId(),memo.getProduct(),
+                    memo.getQuantity(),!memo.isChecked());
+            showAllListEntries();
+        });
     }
 
 
@@ -124,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         final ListView shoppingMemoListView = findViewById(R.id.listview_shopping_memos);
         shoppingMemoListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
+
         shoppingMemoListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             int selCount = 0;
@@ -132,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                if(checked){
                    selCount++;
+
                }else{
                    selCount--;
                }
@@ -144,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+
                 return true;
             }
 
@@ -152,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
                 MenuItem item = menu.findItem(R.id.cab_change);
                 if(selCount == 1){
                     item.setVisible(true);
+
                 }else{
                     item.setVisible(false);
                 }
@@ -161,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 boolean returnValue = true;
+
                 SparseBooleanArray touchedShoppingMemosPosition = shoppingMemoListView.getCheckedItemPositions();
                 switch (item.getItemId()) {
                     case R.id.cab_delete:
@@ -239,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         int quantity = Integer.parseInt(quantityString);
 
-                        ShoppingMemo memo = dataSource.updateShoppingMemo(shoppingMemo.getId(), product, quantity);
+                        ShoppingMemo memo = dataSource.updateShoppingMemo(shoppingMemo.getId(), product, quantity, shoppingMemo.isChecked());
 
                         Log.d(TAG, "Alter Eintrag - ID: " + shoppingMemo.getId() + " Inhalt: " + shoppingMemo.toString());
                         Log.d(TAG, "Neuer Eintrag - ID: " + memo.getId() + " Inhalt: " + memo.toString());
@@ -278,15 +295,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showAllListEntries() {
-        List<ShoppingMemo> shoppingMemos = dataSource.getAllShoppingMemos();
-
-        ArrayAdapter<ShoppingMemo> shoppingMemoArrayAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_multiple_choice, shoppingMemos);
-
-        ListView shoppingMemoListView = findViewById(R.id.listview_shopping_memos);
-        shoppingMemoListView.setAdapter(shoppingMemoArrayAdapter);
-
-
+        List<ShoppingMemo> shoppingMemoList = dataSource.getAllShoppingMemos();
+        ArrayAdapter<ShoppingMemo> adapter = (ArrayAdapter<ShoppingMemo>) mShoppingMemosListView.getAdapter();
+        adapter.clear();
+        adapter.addAll(shoppingMemoList);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
