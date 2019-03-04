@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
-
     <EditText
-        android:id="@+id/editText_quantity"
+        android:id="@+id/etxt_quantity"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -16,12 +15,11 @@
         android:ems="10"
         android:hint="@string/editText_hint_quantity"
         android:inputType="number"
-        android:nextFocusDown="@id/editText_product"
+        android:nextFocusDown="@id/etxt_product"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <EditText
-        android:id="@+id/editText_product"
+        android:id="@+id/etxt_product"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -31,12 +29,11 @@
         android:hint="@string/editText_hint_product"
         android:inputType="text"
         android:imeOptions="actionGo"
-        app:layout_constraintEnd_toStartOf="@+id/button_add_prduct"
-        app:layout_constraintStart_toEndOf="@+id/editText_quantity"
+        app:layout_constraintEnd_toStartOf="@+id/cmd_add_prduct"
+        app:layout_constraintStart_toEndOf="@+id/etxt_quantity"
         app:layout_constraintTop_toTopOf="parent" />
-
     <Button
-        android:id="@+id/button_add_prduct"
+        android:id="@+id/cmd_add_prduct"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -44,10 +41,8 @@
         android:text="@string/button_add_product"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <ListView
-        android:id="@+id/listview_shopping_memos"
-
+        android:id="@+id/lv_shopping_memos"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -57,5 +52,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_add_prduct" />
+        app:layout_constraintTop_toBottomOf="@+id/cmd_add_prduct" />
 </android.support.constraint.ConstraintLayout>
